@@ -4,17 +4,16 @@ import com.yaazhtech.online.learning.management.data.CourseData;
 import com.yaazhtech.online.learning.management.model.CourseInput;
 import com.yaazhtech.online.learning.management.repository.CourseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/course/courseCreation")
 public class CourseController {
     @Autowired
     private CourseRepository courseRepo;
-    @PostMapping
+    @PostMapping("/saveCourse")
     public String newCourse(@RequestBody CourseInput courseObject) {
         //construct new object to our entity class(CourseData)
         CourseData courseData=new CourseData();
@@ -35,5 +34,35 @@ public class CourseController {
         courseRepo.save(courseData);
         return "course enrolled successfully";
     }
+    @GetMapping("/readCourse")
+    public List<CourseData> getAllCourse() {
+        return courseRepo.findAll();
+
+    }
+    @GetMapping("/readCourse/{id}")
+    public CourseData getOneCourse(@PathVariable Long id) {
+        return courseRepo.findById(id).orElse(null);
+
+    }
+    @DeleteMapping("/deleteCourse/{id}")
+    public String deleteCourse(@PathVariable Long id) {
+        courseRepo.deleteById(id);
+return "Course deleted successfully";
+    }
+
+    @PutMapping("/modifyCourse/{id}")
+    public CourseData updateCourse(@PathVariable Long id, @RequestBody CourseData updatedData) {
+
+        CourseData existingData=courseRepo.findById(id).orElse(null);
+        if(existingData!=null){
+
+            existingData.setFees(updatedData.getFees());
+
+            existingData.setCourseLevel(updatedData.getCourseLevel());
+        }
+        assert existingData != null;
+        return courseRepo.save(existingData);
+    }
+
 }
 

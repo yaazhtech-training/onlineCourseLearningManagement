@@ -11,10 +11,10 @@ import java.util.List;
 @RestController
 @RequestMapping("/course/courseCreation")
 public class CourseController {
-    @Autowired
-    private CourseRepository courseRepo;
+    @Autowired//to inject other packages from different packages
+    private CourseRepository courseRepo;//object reference
     @PostMapping("/saveCourse")
-    public String newCourse(@RequestBody CourseInput courseObject) {
+    public String newCourse(@RequestBody CourseInput courseObject) {//@Requestbody-to pass whole class as a input
         //construct new object to our entity class(CourseData)
         CourseData courseData=new CourseData();
         courseData.setCourseId(courseObject.getCourseId());
@@ -32,16 +32,16 @@ public class CourseController {
         courseData.setCourseTakenBy(courseObject.getCourseTakenBy());
          //save it in repository
         courseRepo.save(courseData);
-        return "course enrolled successfully";
+        return "course enrolled successfully";//terminal response message
     }
-    @GetMapping("/readCourse")
-    public List<CourseData> getAllCourse() {
-        return courseRepo.findAll();
+    @GetMapping("/readCourse")//to read the data in our database
+    public List<CourseData> getAllCourse() {//table data as output
+        return courseRepo.findAll();//
 
     }
     @GetMapping("/readCourse/{id}")
-    public CourseData getOneCourse(@PathVariable Long id) {
-        return courseRepo.findById(id).orElse(null);
+    public CourseData getOneCourse(@PathVariable Long id) { //@pathvariable-to pass single variable as a input
+        return courseRepo.findById(id).orElse(null);//to handle negatyive scenerios//your id may or may not be present so we need to check else case aslo
 
     }
     @DeleteMapping("/deleteCourse/{id}")
@@ -50,17 +50,18 @@ public class CourseController {
 return "Course deleted successfully";
     }
 
-    @PutMapping("/modifyCourse/{id}")
+    @PutMapping("/modifyCourse/{id}")//to update already existing rec and save it again
     public CourseData updateCourse(@PathVariable Long id, @RequestBody CourseData updatedData) {
 
-        CourseData existingData=courseRepo.findById(id).orElse(null);
-        if(existingData!=null){
+        CourseData existingData=courseRepo.findById(id).orElse(null);//table data
+
+        if(existingData!=null){//not equal to null
 
             existingData.setFees(updatedData.getFees());
 
             existingData.setCourseLevel(updatedData.getCourseLevel());
         }
-        assert existingData != null;
+     //   assert existingData != null;
         return courseRepo.save(existingData);
     }
 
